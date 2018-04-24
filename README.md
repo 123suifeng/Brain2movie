@@ -1,7 +1,7 @@
-# Brain2movie
+# *Brain2movie*: : Generating Image Sequence from Brain Signal via Temporal Detection and Generative Adversarial Network
 This code is for Brain2movie: Generating Image Sequence from Brain Signal via Temporal Detection and Generative Adversarial Network
 
-# Acknowledgement
+### Acknowledgement
 This code is based on the belowing paper:
 
     Concetto Spampinato, Simone Palazzo, Isaak Kavasidis, Daniela Giordano, Nasim Souly and Mubarak Shah: 
