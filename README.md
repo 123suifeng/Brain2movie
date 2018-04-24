@@ -1,6 +1,12 @@
 # Brain2movie
 This code is for Brain2movie: Generating Image Sequence from Brain Signal via Temporal Detection and Generative Adversarial Network
 
+# Acknowledgement
+This code is based on the belowing paper:
+
+    Concetto Spampinato, Simone Palazzo, Isaak Kavasidis, Daniela Giordano, Nasim Souly and Mubarak Shah: 
+    Deep Learning Human Mind for Automated Visual Classification, CVPR (Oral) 2017
+
 ### Contents
 1. [Requirements: software](#requirements-software)
 2. [Requirements: hardware](#requirements-hardware)
