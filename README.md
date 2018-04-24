@@ -1,11 +1,18 @@
 # Brain2movie
 This code is for Brain2movie: Generating Image Sequence from Brain Signal via Temporal Detection and Generative Adversarial Network
 
-1. [Requirements: software] (#requirement-software)
-2. [Requirements: hardware] (#requirement-hardware)
-3. [Dependencies] (#Install Dependencies)
-4. [Demo] (#Demo)
+### Contents
+1. [Requirements: software](#requirements-software)
+2. [Requirements: hardware](#requirements-hardware)
+3. [Install: Dependencies](#dependencies)
+4. [Demo](#demo)
 
+### Requirements: software
+1. ~~
+### Requirements: hardware
+1. ~~
+### Dependencies
+1. ~~
 ### Demo
 ```shell
 python thecho7.py
