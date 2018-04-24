@@ -50,15 +50,15 @@ import torchvision.utils as vutils
 import torch.backends.cudnn as cudnn; cudnn.benchmark = True
 import models.lstm_model as lm
 import models.gan_model as gm
-import utils.loaddata
+import utils.loaddata as loaddata
 
 # Create result folder (if exists, just declare the directory)
-result_path = "%s/%d_%d_%d".format('result', opt.seq_start, opt.seq_end, opt.lstm_size)
+result_path = "{}/{}_{}_{}".format('result', opt.seq_start, opt.seq_end, opt.lstm_size)
 if not os.path.exists(result_path):
     os.makedirs(result_path)
 
-result_filename = "%s/%d_%d_%d.txt".format(result_path, opt.seq_start, opt.seq_end, opt.lstm_size)
-result_file = open(result_file, 'w')
+result_filename = "{}/{}_{}_{}.txt".format(result_path, opt.seq_start, opt.seq_end, opt.lstm_size)
+result_file = open(result_filename, 'w')
 
 # Load dataset
 dataset = loaddata.EEGDataset(opt.eeg_dataset)
@@ -192,6 +192,6 @@ for epoch in range(1, opt.epochs+1):
 
 
     fake = models['gen'](fixed_noise)
-    image_name = "%s/%02d.png".format(result_path, epoch)
+    image_name = "{}/{:03d}.png".format(result_path, epoch)
     vutils.save_image(fake.data, image_name, normalize=True)
 
