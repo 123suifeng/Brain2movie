@@ -2,6 +2,7 @@
 import math
 import time
 import torch
+from torch.utils.data import Dataset
 
 # Dataset class
 class EEGDataset:
@@ -57,4 +58,17 @@ class Splitter:
         eeg, label = self.dataset[self.split_idx[i]]
         # Return
         return eeg, label
+
+class EEGDetectionDataset(Dataset):
+    def __init__(self, args, _data_type):
+        data_type = 'eeg_{}'.format(_data_type)
+        args.datafile = '../{}/{}/{}.pth'.format('eeg_dataset', args.dataset, data_type)
+        data = torch.load(args.datafile)
+        self.len = int(data['label'].shape[0])
+
+    def __getitem__(self, i):
+        return self.data['data'][i], self.data['label'][i]
+
+    def __len__(self):
+        return self.len
 

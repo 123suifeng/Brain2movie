@@ -3,12 +3,12 @@ from __future__ import division # IN PYTHON3, IT IS NOT NEEDED
 import argparse
 parser = argparse.ArgumentParser(description="Template")
 # Dataset options
-parser.add_argument('-ed', '--eeg-dataset', default="datasets/eeg_signals_128_sequential_band_all_with_mean_std.pth", help="EEG dataset path")
-parser.add_argument('-sp', '--splits-path', default="datasets/splits_by_image.pth", help="splits path")
+parser.add_argument('-ed', '--eeg-dataset', default="../eeg_dataset/cvpr17/eeg_signals_128_sequential_band_all_with_mean_std.pth", help="EEG dataset path")
+parser.add_argument('-sp', '--splits-path', default="../eeg_dataset/cvpr17/splits_by_image.pth", help="splits path")
 parser.add_argument('-sn', '--split-num', default=0, type=int, help="split number")
 # Model options
 parser.add_argument('-ll', '--lstm-layers', default=1, type=int, help="LSTM layers")
-parser.add_argument('-ls', '--lstm-size', default=10, type=int, help="LSTM hidden size")
+parser.add_argument('-ls', '--lstm-size', default=20, type=int, help="LSTM hidden size")
 parser.add_argument('-os', '--output-size', default=40, type=int, help="output layer size")
 # Training options
 parser.add_argument("-b", "--batch_size", default=16, type=int, help="batch size")
@@ -63,7 +63,7 @@ class EEGDataset:
     def __getitem__(self, i):
         # Process EEG
         eeg = ((self.data[i]["eeg"].float() - self.means)/self.stddevs).t()
-        eeg = eeg[320:420,:] # 21 ~ 450 frame : extract 430 frames to analyze
+        eeg = eeg[50:150,:] # 21 ~ 450 frame : extract 430 frames to analyze
         # Get label
         label = self.data[i]["label"]
         # Return
@@ -109,7 +109,6 @@ class Model(nn.Module):
         # Call parent
         super(Model, self).__init__()
         # Define parameters
-        self.counter = 0
         self.input_size = input_size
         self.lstm_size = lstm_size
         self.lstm_layers = lstm_layers
@@ -130,12 +129,8 @@ class Model(nn.Module):
         x1 = self.lstm(x, lstm_init)[0][:,-1,:] # LAST HIDDEN OUTPUT
         x2 = self.lstm(x, lstm_init)[0]
 
-	#print(x2)
-
         # self.lstm(x, lstm_init)[0] : (batch_size, sequence_length, hidden_size) // output ? (sequence_len, input_size) * (input_size, hidden_size) = (sequence_len, hidden_size)
         # self.lstm(x, lstm_init)[1] : (1, batch_size, hidden_size) // hidden ? hidden !
-        #print(self.counter)
-        self.counter += 1
         # Forward output
         x = self.output(x1)
         return x
@@ -148,8 +143,10 @@ if not opt.no_cuda:
     model.cuda()
     print("Copied to CUDA")
 
+time_count = 0
 # Start training
 for epoch in range(1, opt.epochs+1):
+    start = time.time()
     # Initialize loss/accuracy variables
     losses = {"train": 0, "val": 0, "test": 0}
     accuracies = {"train": 0, "val": 0, "test": 0}
@@ -203,3 +200,8 @@ for epoch in range(1, opt.epochs+1):
                                                                                                          losses["test"]/counts["test"],
                                                                                                          accuracies["test"]/counts["test"]))
 
+    end = time.time()
+    time_count += (end-start)
+    print("Time cost : {:.4f}".format(end-start))
+
+print("Total time cost : {:.4f}".format(time_count))
