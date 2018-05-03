@@ -127,8 +127,10 @@ class Model(nn.Module):
         lstm_init = (Variable(lstm_init[0], volatile=x.volatile), Variable(lstm_init[1], volatile=x.volatile))
         # Forward LSTM and get final state
         x1 = self.lstm(x, lstm_init)[0][:,-1,:] # LAST HIDDEN OUTPUT
-        x2 = self.lstm(x, lstm_init)[0]
+        x2 = self.lstm(x)
 
+        print(x2)
+        #print(x1)
         # self.lstm(x, lstm_init)[0] : (batch_size, sequence_length, hidden_size) // output ? (sequence_len, input_size) * (input_size, hidden_size) = (sequence_len, hidden_size)
         # self.lstm(x, lstm_init)[1] : (1, batch_size, hidden_size) // hidden ? hidden !
         # Forward output
