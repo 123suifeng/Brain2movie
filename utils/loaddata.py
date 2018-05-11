@@ -63,8 +63,8 @@ class EEGDetectionDataset(Dataset):
     def __init__(self, args, _data_type):
         data_type = 'eeg_{}'.format(_data_type)
         args.datafile = '../{}/{}/{}.pth'.format('eeg_dataset', args.dataset, data_type)
-        data = torch.load(args.datafile)
-        self.len = int(data['label'].shape[0])
+        self.data = torch.load(args.datafile)
+        self.len = int(self.data['label'].shape[0])
 
     def __getitem__(self, i):
         return self.data['data'][i], self.data['label'][i]

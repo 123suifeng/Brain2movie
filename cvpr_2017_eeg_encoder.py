@@ -63,7 +63,7 @@ class EEGDataset:
     def __getitem__(self, i):
         # Process EEG
         eeg = ((self.data[i]["eeg"].float() - self.means)/self.stddevs).t()
-        eeg = eeg[50:150,:] # 21 ~ 450 frame : extract 430 frames to analyze
+        eeg = eeg[233:234,:] # 21 ~ 450 frame : extract 430 frames to analyze
         # Get label
         label = self.data[i]["label"]
         # Return
@@ -123,14 +123,14 @@ class Model(nn.Module):
         # Prepare LSTM initiale state
         batch_size = x.size(0)
         lstm_init = (torch.zeros(self.lstm_layers, batch_size, self.lstm_size), torch.zeros(self.lstm_layers, batch_size, self.lstm_size)) # lstm_init : tuple, with len 2
+        #print("lstm_init: {}\n".format(lstm_init))
+        #print("x: {}\n".format(x.shape))
         if x.is_cuda: lstm_init = (lstm_init[0].cuda(), lstm_init[0].cuda())
         lstm_init = (Variable(lstm_init[0], volatile=x.volatile), Variable(lstm_init[1], volatile=x.volatile))
         # Forward LSTM and get final state
         x1 = self.lstm(x, lstm_init)[0][:,-1,:] # LAST HIDDEN OUTPUT
         x2 = self.lstm(x)
 
-        print(x2)
-        #print(x1)
         # self.lstm(x, lstm_init)[0] : (batch_size, sequence_length, hidden_size) // output ? (sequence_len, input_size) * (input_size, hidden_size) = (sequence_len, hidden_size)
         # self.lstm(x, lstm_init)[1] : (1, batch_size, hidden_size) // hidden ? hidden !
         # Forward output
