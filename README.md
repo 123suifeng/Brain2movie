@@ -8,25 +8,44 @@ This code is based on the belowing paper:
     Deep Learning Human Mind for Automated Visual Classification, CVPR (Oral) 2017
 
 ### Contents
-1. [Requirements: software](#requirements-software)
-2. [Requirements: hardware](#requirements-hardware)
-3. [Install: Dependencies](#dependencies)
+1. [Requirements: Hardware](#requirements-hardware)
+2. [Prerequisites](#prerequisites)
+3. [Installation](#installation)
 4. [Demo](#demo)
 
-### Requirements: software
-1. ~~
-### Requirements: hardware
-1. ~~
-### Dependencies
-1. ~~
+### Requirements: Hardware
+* Linux Environment (Ubuntu)
+* GPU with over 3GB (Trained with Nvidia GTX-1080Ti)
+
+### Prerequisites
+* Pytorch (Implemented with 0.4.0)
+* Tensorflow
+* CUDA 8.0 or Higher
+* Numpy
+* Matplotlib (Optional)
+
+### Installation
+Clone the code
+```shell
+git clone https://github.com/thecho7/Brain2movie.git
+```
+Dataset Download (TBI)
+
 ### Demo
+1. (Beta) - **Classification & Image Generation**
 ```shell
 python thecho7.py
 ```
-
 The results are saved in result folder with data information.
 ex) If the analyzed sequence is from 30 to 300, the folder will be created 'result/30_300/'.
 
 The saved results are
-1. Classfication result
+1. Classification result
 2. Generated images
+
+2. (Beta) - **Detection**
+```shell
+python temporal_proposal.py
+```
+
+
