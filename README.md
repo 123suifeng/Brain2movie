@@ -39,9 +39,7 @@ python thecho7.py
 The results are saved in result folder with data information.
 ex) If the analyzed sequence is from 30 to 300, the folder will be created 'result/30_300/'.
 
-The saved results are
-1. Classification result
-2. Generated images
+The saved results are *Classification result* and *Generated images*.
 
 2. (Beta) - **Detection**
 ```shell
