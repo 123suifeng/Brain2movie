@@ -3,8 +3,8 @@ from __future__ import division # IN PYTHON3, IT IS NOT NEEDED
 import argparse
 parser = argparse.ArgumentParser(description="Template")
 # Dataset options
-parser.add_argument('-ed', '--eeg-dataset', default="../eeg_dataset/cvpr17/eeg_signals_128_sequential_band_all_with_mean_std.pth", help="EEG dataset path")
-parser.add_argument('-sp', '--splits-path', default="../eeg_dataset/cvpr17/splits_by_image.pth", help="splits path")
+parser.add_argument('-ed', '--eeg-dataset', default="../eeg_dataset/proposals/proposals.pth", help="EEG dataset path")
+parser.add_argument('-sp', '--splits-path', default="../eeg_dataset/proposals/split.pth", help="splits path")
 parser.add_argument('-sn', '--split-num', default=0, type=int, help="split number")
 # Model options
 parser.add_argument('-ll', '--lstm-layers', default=1, type=int, help="LSTM layers")
@@ -13,7 +13,7 @@ parser.add_argument('-os', '--output-size', default=40, type=int, help="output l
 # Training options
 parser.add_argument("-b", "--batch_size", default=16, type=int, help="batch size")
 parser.add_argument('-o', '--optim', default="Adam", help="optimizer")
-parser.add_argument('-lr', '--learning-rate', default=0.001, type=float, help="learning rate")
+parser.add_argument('-lr', '--learning-rate', default=1e-3, type=float, help="learning rate")
 parser.add_argument('-lrdb', '--learning-rate-decay-by', default=0.5, type=float, help="learning rate decay factor")
 parser.add_argument('-lrde', '--learning-rate-decay-every', default=10, type=int, help="learning rate decay period")
 parser.add_argument('-dw', '--data-workers', default=4, type=int, help="data loading workers")
@@ -49,10 +49,6 @@ class EEGDataset:
         loaded = torch.load(eeg_signals_path) #len : 5 ( subject 5 is duplicated)
 
         self.data = loaded["dataset"] # 11965
-        self.labels = loaded["labels"] # (1, 40) ? (40, 1)
-        self.images = loaded["images"] # (1996 1)?
-        self.means = loaded["means"]
-        self.stddevs = loaded["stddevs"]
         # Compute size
         self.size = len(self.data)
 
@@ -63,11 +59,7 @@ class EEGDataset:
     # Get item
     def __getitem__(self, i):
         # Process EEG
-        eeg = ((self.data[i]["eeg"].float() - self.means)/self.stddevs).t()
-        #random_start = np.random.randint(20, 50)
-        eeg = eeg[20:420:4,:] # 21 ~ 450 frame : extract 430 frames to analyze
-        #print(eeg.shape)
-        #eeg[:90, :] = torch.rand(90, 128)
+        eeg = self.data[i]["eeg"].float()
         # Get label
         label = self.data[i]["label"]
         # Return
@@ -81,10 +73,9 @@ class Splitter:
         self.dataset = dataset
         # Load split
         loaded = torch.load(split_path)
-        print(loaded["splits"][0])
         self.split_idx = loaded["splits"][split_num][split_name]
         # Filter data
-        self.split_idx = [i for i in self.split_idx if 450 <= self.dataset.data[i]["eeg"].size(1) <= 600]
+        self.split_idx = [i for i in self.split_idx if self.dataset.data[i]["eeg"].size(0) == 100]
         # Compute size
         self.size = len(self.split_idx)
 
@@ -129,9 +120,9 @@ class Model(nn.Module):
         if x.is_cuda: lstm_init = (lstm_init[0].cuda(), lstm_init[0].cuda())
         lstm_init = (Variable(lstm_init[0], volatile=x.volatile), Variable(lstm_init[1], volatile=x.volatile))
         # Forward LSTM and get final state
-        x1 = self.lstm(x, lstm_init)[0][:,-1,:] # LAST HIDDEN OUTPUT
+        x = self.lstm(x, lstm_init)[0][:,-1,:] # LAST HIDDEN OUTPUT
         #print(x1.data.view(16, -1, x1.shape[1])[:3, :, :9])
-        x = self.output(x1)
+        x = self.output(x)
         return x
 
 model = Model(128, opt.lstm_size, opt.lstm_layers, opt.output_size)
@@ -164,7 +155,7 @@ for epoch in range(1, opt.epochs+1):
             model.eval()
         # Process all split batches
         for i, (input, target) in enumerate(loaders[split]): # input : EEG tensors shapes (batch_size, 430, 128), target : annotation
-
+            target = target.long()
             # Check CUDA             
             if not opt.no_cuda:
                 input = input.cuda()

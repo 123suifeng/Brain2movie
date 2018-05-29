@@ -1,0 +1,193 @@
+test11 : lstm_size 256
+cls : 1 fc
+bbox : 1fc
+
+test14 : lstm_size 150
+cls : 2 fc + relu (128)
+bbox : 1fc
+
+test16 : lstm_size 150
+cls : 2 fc + relu (1024)
+bbox : 1fc
+
+test17 : resume of test11
+
+test18 : lstm_size 256
+batchnorm
+cls : 2 fc + relu
+bbox : 1fc
+
+test19 (05170758)
+proposal 16
+lstm_size 256 + relu
+cls : 1 fc
+bbox : 1 fc
+
+test xx
+proposal 16
+lstm_size 512 + relu
+cls : 1fc
+bbox : 1fc
+--> nan
+
+test20 (05170810) --> better than 19
+proposal 16
+lstm_size 386
+cls : 1fc
+bbox : 1fc
+
+HOW TO AVOID ZERO?
+Chance of proposal labeled 0.
+40 Classes
+4~5 Classes per data
+16 Proposals per data
+So, 1~2 is appropriate
+!!! Reducing the number of class 0 !!!
+
+
+test21 (0520_0716) --> Not working. lstm 400 is way big?
+proposal 16
+lstm_size 400
+cls : 1fc
+bbox : 1fc
+proposal score, class filtrated
+lr : 1e-6
+
+test22 (0520_0715) --> Loss is successfully decreased but still converges to 0 label
+proposal 16
+lstm_size 350
+cls : 1fc
+bbox : 1fc
+proposal score, class filtrated
+lr : 1e-5
+
+class information error (object class is 0~39, bg is 40)
+but I marked 0 for bg -> fuck
+Modified
+
+test23 (0521_0017) -> looks good
+proposal 16
+lstm_size 350
+cls : 1fc
+bbox : 1fc
+proposal score, class filtrated
+lr : 1e-5
+delete all bg and just fg
+
+test24 (0521_0028)
+proposal 16
+lstm_size 350
+cls : 1fc
+bbox : 1fc
+proposal score, class filtrated
+lr : 1e-6
+mark 40 for bg even bgs are randomly generated (it does not have any pattern)
+
+test25 (0521_0441)
+proposal 16
+lstm_size 350
+cls : 2fc + relu (350, 200)
+bbox : 1fc
+proposal score, class filtrated
+lr : 1e-5
+mark 40 for bg even bgs are randomly generated (it does not have any pattern) -> lael converges to 40 (bg) fuck that shit
+
+test26 (0521_1112)
+proposal 16
+lstm_size 350
+cls : 3fc + relu (350, 256, 128)
+bbox : 1fc
+proposal score, class filtrated
+lr : 1e-5
+delete all bg and just fg
+
+test27 (0521_1334) -> nan
+proposal 16
+lstm_size 350
+cls : 4fc + relu (350, 512, 512, 256)
+bbox : 1fc
+proposal score, class filtrated
+lr : 1e-5
+delete all bg and just fg
+
+test28 (0521_1336) -> nan
+proposal 16
+lstm_size 350
+cls : 4fc + relu (350, 256, 256, 256)
+bbox : 1fc
+proposal score, class filtrated
+lr : 1e-5
+delete all bg and just fg
+
+test29 (0521_1343) -> converges to 21 
+proposal 16
+lstm_size 350
+cls : 3fc + relu (350, 200, 100)
+bbox : 1fc
+proposal score, class filtrated
+lr : 1e-5
+delete all bg and just fg
+
+testxx (0521_2044) -> nan
+proposal 16
+lstm_size 512
+cls : 3fc + relu (512, 256, 256)
+bbox : 1fc
+proposal score, class filtrated
+lr : 1e-5
+delete all bg and just fg
+not encoding
+
+test30 (0521_2046) -> converges (Actually not checked within 17 epochs)
+proposal 16
+lstm_size 350
+cls : 3fc + relu (350, 256, 256)
+bbox : 1fc
+proposal score, class filtrated
+lr : 1e-5
+delete all bg and just fg
+not encoding
+
+test31 (0522_0443) -> still 3.7
+proposal 16
+lstm_size 350
+cls : 3fc + relu (350, 200, 100) with dropout 0.7
+bbox : 1fc
+proposal score, class filtrated
+lr : 1e-5
+delete all bg and just fg
+
+test32 (0522_0908) -> stop on epoch 33
+proposal 16
+lstm_size 350
+cls : 3fc + relu (350, 200, 100) with dropout 0.7
+bbox : 1fc
+proposal score, class filtrated
+lr : 1e-5
+delete all bg and just fg
+not encoding
+
+test33 (0522_1248) -> not work
+proposal 16
+lstm_size 350
+cls : 3fc + relu (350, 200, 100) with dropout 0.7
+bbox : 1fc
+proposal score, class filtrated
+lr : 1e-5
+delete all bg and just fg
+init with 0, 0.01
+
+Problem is weight decrease -> gradient problem
+Control the learning rate and check the change
+
+test35 (0523_0051) -> weight is not decreased but learning doesn't work
+proposal 16
+lstm_size 350
+cls : 2fc + relu (350, 200) with dropout 0.7
+bbox : 1fc
+proposal score, class filtrated
+lr : 1e-7 --> low lr
+delete all bg and just fg
+init with 0, 0.01
+
+

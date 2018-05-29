@@ -3,6 +3,7 @@ import math
 import time
 import torch
 from torch.utils.data import Dataset
+from eeg_plot import plot_EEG3
 
 # Dataset class
 class EEGDataset:
@@ -61,12 +62,13 @@ class Splitter:
 
 class EEGDetectionDataset(Dataset):
     def __init__(self, args, _data_type):
-        data_type = 'eeg_{}'.format(_data_type)
+        data_type = 'eeg3_{}'.format(_data_type)
         args.datafile = '../{}/{}/{}.pth'.format('eeg_dataset', args.dataset, data_type)
         self.data = torch.load(args.datafile)
         self.len = int(self.data['label'].shape[0])
 
     def __getitem__(self, i):
+        #plot_EEG3(self.data['data'][i], i)
         return self.data['data'][i], self.data['label'][i]
 
     def __len__(self):
